@@ -8,18 +8,29 @@ async function convertTextToSpeech(text, outputPath = 'temp/speech.mp3') {
     // Google Cloud TTS istemcisi oluştur
     const client = new textToSpeech.TextToSpeechClient();
 
+    // Metni SSML ile zenginleştir - daha doğal ses için
+    const ssmlText = `<speak>
+      <prosody rate="0.95" pitch="+0.5" volume="loud">
+        <break time="500ms"/>
+        ${text}
+        <break time="700ms"/>
+      </prosody>
+    </speak>`;
+
     const request = {
-      input: { text: text },
+      input: { ssml: ssmlText },
       voice: {
         languageCode: 'tr-TR',
-        name: 'tr-TR-Wavenet-E',  // Kadın ses
+        name: 'tr-TR-Wavenet-F',  // Daha doğal kadın sesi (F modeli)
         ssmlGender: 'FEMALE'
       },
       audioConfig: {
         audioEncoding: 'MP3',
-        speakingRate: 0.9,
-        pitch: 0.0,
-        volumeGainDb: 0.0
+        effectsProfileId: ['headphone-class-device'], // Daha yüksek kalite için
+        pitch: 0.5,                // Biraz daha yüksek ses tonu
+        speakingRate: 0.95,        // Biraz daha yavaş konuşma hızı
+        volumeGainDb: 3.0,         // Biraz daha yüksek ses seviyesi
+        sampleRateHertz: 24000     // Daha yüksek örnekleme hızı
       }
     };
 
@@ -33,7 +44,7 @@ async function convertTextToSpeech(text, outputPath = 'temp/speech.mp3') {
 
     // Ses dosyasını kaydet
     fs.writeFileSync(outputPath, response.audioContent, 'binary');
-    console.log(`Ses dosyası oluşturuldu: ${outputPath}`);
+    console.log(`Yüksek kaliteli ses dosyası oluşturuldu: ${outputPath}`);
     
     return outputPath;
   } catch (error) {
