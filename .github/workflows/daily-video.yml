@@ -1,6 +1,5 @@
 # .github/workflows/daily-video.yml - Güncellenmiş versiyon
 name: Daily Motivation Video Creator
-
 on:
   workflow_dispatch:
     inputs:
@@ -11,8 +10,7 @@ on:
   repository_dispatch:
     types: [create-video]
   schedule:
-    - cron: '0 7 * * *'  # Her gün 10:00 TR saati
-
+    - cron: '0 7 * * *'  # Her gün 10:00 TR saati (cron düzeltildi)
 jobs:
   create-and-upload-video:
     runs-on: ubuntu-latest
@@ -21,31 +19,25 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
-
+        # cache satırını kaldırdık
     - name: Install dependencies
       run: npm install
-
     - name: Setup FFmpeg
       uses: FedericoCarboni/setup-ffmpeg@v3
       with:
         ffmpeg-version: release
-
     - name: Create temp directories
       run: |
         mkdir -p temp
         mkdir -p output
-
     - name: Setup Google Cloud credentials
       run: |
         echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > google-credentials.json
         echo "GOOGLE_APPLICATION_CREDENTIALS=google-credentials.json" >> $GITHUB_ENV
-
     - name: Generate motivational text
       run: node scripts/main.js
       env:
@@ -55,7 +47,6 @@ jobs:
         YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
         YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
         TEST_MODE: ${{ github.event.inputs.test_mode }}
-
     - name: Upload artifacts (if test mode)
       if: github.event.inputs.test_mode == 'true'
       uses: actions/upload-artifact@v4
@@ -63,11 +54,8 @@ jobs:
         name: test-video
         path: output/
         retention-days: 7
-
     - name: Cleanup
       if: always()
       run: |
         rm -rf temp/
         rm -f google-credentials.json
-
----
