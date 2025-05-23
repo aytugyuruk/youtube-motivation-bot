@@ -1,0 +1,33 @@
+name: Günlük Motivasyon Videosu
+
+on:
+  schedule:
+    - cron: '0 7 * * *'  # Her gün 10:00 TR saati
+  workflow_dispatch:  # Manuel başlatma
+
+jobs:
+  create-video:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Repository'yi indir
+      uses: actions/checkout@v4
+    
+    - name: Node.js kur
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Gerekli araçları yükle
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg
+        npm install
+    
+    - name: Video oluştur ve yükle
+      run: node create-video.js
+      env:
+        OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        GOOGLE_TTS_API_KEY: ${{ secrets.GOOGLE_TTS_API_KEY }}
+        PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
