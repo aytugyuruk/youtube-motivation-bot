@@ -8,13 +8,18 @@ async function downloadBackgroundVideos(count = 2) {
   
   try {
     // YouTube Shorts için dikey (portrait) videolar arayın
-    // Daha sürükleyici temalar: motivasyon, başarı, hareket, enerji
+    // Daha sürükleyici temalar: gizem, bilim kurgu, macera, gerilim
     const queries = [
-      'success+motivation+vertical',
-      'energy+movement+vertical',
-      'achievement+inspiration+vertical',
-      'dream+goal+vertical',
-      'fitness+motivation+vertical'
+      'mystery+vertical',
+      'sci+fi+vertical',
+      'adventure+vertical',
+      'suspense+vertical',
+      'fantasy+vertical',
+      'time+travel+vertical',
+      'space+vertical',
+      'futuristic+vertical',
+      'cinematic+vertical',
+      'dramatic+vertical'
     ];
     
     // Rastgele bir sorgu seç
