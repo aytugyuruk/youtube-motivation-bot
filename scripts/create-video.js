@@ -13,37 +13,70 @@ async function createMotivationalVideo(audioPath, backgroundVideos = [], outputP
 
       let command = ffmpeg();
 
+      // Video süresini 15 saniye ile sınırla
+      const maxDuration = 15;
+
       if (backgroundVideos.length > 0) {
-        // Arkaplan videosu varsa
+        // Arkaplan videosu varsa - YouTube Shorts formatı (9:16 dikey format)
         command
           .input(backgroundVideos[0])
           .input(audioPath)
           .outputOptions([
             '-c:v libx264',
             '-c:a aac',
+            '-b:v 2500k',        // Daha yüksek video bit hızı
+            '-b:a 192k',         // Daha yüksek ses bit hızı
             '-shortest',
-            '-filter_complex [0:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,setsar=1[v]',
+            '-t', maxDuration,   // Maksimum 15 saniye
+            // 9:16 dikey format (1080x1920) - Telefon ekranı için
+            '-filter_complex [0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,eq=brightness=0.05:saturation=1.3[v]',
             '-map [v]',
             '-map 1:a',
             '-r 30',
-            '-preset fast'
+            '-preset slow',      // Daha yüksek kalite için 'slow' preset
+            '-profile:v high',   // Yüksek profil
+            '-level 4.2',        // Uyumlu seviye
+            '-movflags +faststart' // Web'de daha hızlı başlatma
           ]);
       } else {
-        // Sadece ses + statik arkaplan
+        // Sadece ses + gradyan arkaplan (daha çekici)
         command
           .input(audioPath)
           .inputOptions([
             '-f lavfi',
-            '-i color=c=black:s=1920x1080:d=60'  // 60 saniye siyah arkaplan
+            // Siyah yerine mavi-mor gradyan arkaplan
+            '-i color=c=blue:s=1080x1920:d=15,format=yuv420p,gradients=s=1080x1920:c0=0x000066:c1=0x9933ff:x0=0:y0=0:x1=1080:y1=1920:r=9'
           ])
           .outputOptions([
             '-c:v libx264',
             '-c:a aac',
+            '-b:v 2500k',        // Daha yüksek video bit hızı
+            '-b:a 192k',         // Daha yüksek ses bit hızı
             '-shortest',
+            '-t', maxDuration,   // Maksimum 15 saniye
             '-r 30',
-            '-preset fast'
+            '-preset slow',      // Daha yüksek kalite için 'slow' preset
+            '-profile:v high',   // Yüksek profil
+            '-movflags +faststart' // Web'de daha hızlı başlatma
           ]);
       }
+
+      // Altyazı ekle (opsiyonel)
+      // Bu kısım metni video üzerine ekler
+      // command.videoFilters({
+      //   filter: 'drawtext',
+      //   options: {
+      //     fontfile: '/path/to/font.ttf',
+      //     text: 'Motivasyon',
+      //     fontsize: 48,
+      //     fontcolor: 'white',
+      //     x: '(w-text_w)/2',
+      //     y: 'h-th-50',
+      //     shadowcolor: 'black',
+      //     shadowx: 2,
+      //     shadowy: 2
+      //   }
+      // });
 
       command
         .output(outputPath)
