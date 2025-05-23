@@ -1,12 +1,18 @@
 const fetch = require('node-fetch');
 
 async function generateMotivationalText() {
+  // YouTube Shorts için daha çekici konular
   const topics = [
     "başarı ve azim",
     "kendine güven",
     "hedeflere odaklanma",
     "zorlukları aşma",
-    "yeni başlangıçlar"
+    "yeni başlangıçlar",
+    "motivasyon",
+    "pozitif düşünce",
+    "hayallerini gerçekleştirme",
+    "iç huzur",
+    "güçlü olmak"
   ];
   
   const randomTopic = topics[Math.floor(Math.random() * topics.length)];
@@ -25,22 +31,31 @@ async function generateMotivationalText() {
         messages: [
           {
             role: 'system',
-            content: 'Sen bir motivasyon uzmanısın. Kısa, güçlü ve ilham verici Türkçe motivasyon metinleri yazıyorsun. Her metin 40-60 saniyelik konuşma için uygun olmalı (yaklaşık 80-120 kelime).'
+            content: 'Sen bir TikTok ve YouTube Shorts motivasyon içerik üreticisisin. Çok kısa, güçlü ve sürükleyici Türkçe motivasyon metinleri yazıyorsun. Her metin 10-15 saniyelik konuşma için uygun olmalı (yaklaşık 20-30 kelime). Metin kısa, vurucu ve akılda kalıcı olmalı. Emoji kullanma.'
           },
           {
             role: 'user',
-            content: `${randomTopic} konusunda günlük motivasyon mesajı yaz. Kişisel hitap et, pozitif ve harekete geçirici ol.`
+            content: `${randomTopic} konusunda 10-15 saniyelik bir YouTube Shorts videosu için çok kısa, güçlü ve sürükleyici bir motivasyon mesajı yaz. Kişisel hitap et, pozitif ve harekete geçirici ol. Metin 20-30 kelimeyi geçmemeli.`
           }
         ],
-        max_tokens: 200,
-        temperature: 0.8
+        max_tokens: 100,
+        temperature: 0.9
       })
     });
 
     const data = await response.json();
     if (data.choices && data.choices[0]) {
+      // Metni kısalt ve düzenle
+      let text = data.choices[0].message.content.trim();
+      
+      // Metni 30 kelimeye kadar kısalt
+      const words = text.split(/\s+/);
+      if (words.length > 30) {
+        text = words.slice(0, 30).join(' ') + '!';
+      }
+      
       return {
-        text: data.choices[0].message.content.trim(),
+        text: text,
         topic: randomTopic
       };
     } else {
@@ -48,15 +63,17 @@ async function generateMotivationalText() {
     }
   } catch (error) {
     console.error('Metin oluşturma hatası:', error);
-    // Fallback metinler
+    // Shorts için daha kısa fallback metinler
     const fallbackTexts = [
-      "Bugün yeni fırsatlarla dolu bir gün. Kendine inan, hedeflerine odaklan ve adım adım ilerle. Başarı senin elinde!",
-      "Her zorluk seni daha güçlü yapıyor. Vazgeçme, sabırlı ol ve rüyalarının peşinden koş. Sen harikasın!",
-      "Küçük adımlar büyük değişimler yaratır. Bugün kendini geliştirmek için bir şey yap. Potansiyelin sınırsız!"
+      "Kendine inan! Bugün senin günün, harekete geç!",
+      "Vazgeçme! Her zorluk seni daha güçlü yapıyor!",
+      "Hayallerin için bugün bir adım at. Yarın çok geç olabilir!",
+      "Başarı, konfor alanının dışında başlar. Şimdi harekete geç!",
+      "Düştüğün yerden kalk ve devam et. Asla pes etme!"
     ];
     return {
       text: fallbackTexts[Math.floor(Math.random() * fallbackTexts.length)],
-      topic: "genel motivasyon"
+      topic: "motivasyon"
     };
   }
 }
