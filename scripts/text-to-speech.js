@@ -21,7 +21,7 @@ async function convertTextToSpeech(text, outputPath = 'temp/speech.mp3') {
       input: { ssml: ssmlText },
       voice: {
         languageCode: 'tr-TR',
-        name: 'tr-TR-Wavenet-F',  // Daha doğal kadın sesi (F modeli)
+        name: 'tr-TR-Standard-B',  // Türkçe kadın sesi (Standard modeli)
         ssmlGender: 'FEMALE'
       },
       audioConfig: {
