@@ -47,10 +47,10 @@ async function downloadBackgroundVideos(count = 2) {
           file.file_type === 'video/mp4'
         );
         
-        // Süre 30 saniyeden az olmalı
-        const shortDuration = video.duration <= 30;
+        // Video süresi 20-60 saniye arasında olmalı (daha uzun videolar için)
+        const appropriateDuration = video.duration >= 20 && video.duration <= 60;
         
-        return hasHDVersion && shortDuration;
+        return hasHDVersion && appropriateDuration;
       });
 
     // Rastgele videolar seç ve indir
