@@ -36,8 +36,8 @@ jobs:
         mkdir -p output
     - name: Setup Google Cloud credentials
       run: |
-        echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > google-credentials.json
-        echo "GOOGLE_APPLICATION_CREDENTIALS=google-credentials.json" >> $GITHUB_ENV
+        echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' | base64 -d > google-credentials.json
+        echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/google-credentials.json" >> $GITHUB_ENV
     - name: Generate motivational text
       run: node scripts/main.js
       env:
