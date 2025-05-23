@@ -1,18 +1,18 @@
 const fetch = require('node-fetch');
 
-async function generateMotivationalText() {
-  // YouTube Shorts için daha çekici konular
+async function generateStoryText() {
+  // YouTube Shorts için ilgi çekici hikaye konuları
   const topics = [
-    "başarı ve azim",
-    "kendine güven",
-    "hedeflere odaklanma",
-    "zorlukları aşma",
-    "yeni başlangıçlar",
-    "motivasyon",
-    "pozitif düşünce",
-    "hayallerini gerçekleştirme",
-    "iç huzur",
-    "güçlü olmak"
+    "gizem ve macera",
+    "bilim kurgu",
+    "romantik gerilim",
+    "doğaüstü olaylar",
+    "tarihi sırlar",
+    "paralel evrenler",
+    "zamanda yolculuk",
+    "yapay zeka",
+    "distopik gelecek",
+    "kayıp hazineler"
   ];
   
   const randomTopic = topics[Math.floor(Math.random() * topics.length)];
@@ -24,34 +24,39 @@ async function generateMotivationalText() {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': process.env.APP_URL || 'https://localhost',
-        'X-Title': 'YouTube Motivation Bot'
+        'X-Title': 'YouTube Story Bot'
       },
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
-            content: 'Sen bir TikTok ve YouTube Shorts motivasyon içerik üreticisisin. Çok kısa, güçlü ve sürükleyici Türkçe motivasyon metinleri yazıyorsun. Her metin 10-15 saniyelik konuşma için uygun olmalı (yaklaşık 20-30 kelime). Metin kısa, vurucu ve akılda kalıcı olmalı. Emoji kullanma.'
+            content: 'Sen bir TikTok ve YouTube Shorts hikaye anlatıcısısın. Çok sürükleyici, merak uyandırıcı ve ilgi çekici Türkçe hikaye metinleri yazıyorsun. Her hikaye 20 saniyelik konuşma için uygun olmalı (yaklaşık 40-50 kelime). Hikaye heyecanlı bir yerde kesilmeli ve "Devamı Part 2\'de" diyerek bitmeli. Emoji kullanma.'
           },
           {
             role: 'user',
-            content: `${randomTopic} konusunda 10-15 saniyelik bir YouTube Shorts videosu için çok kısa, güçlü ve sürükleyici bir motivasyon mesajı yaz. Kişisel hitap et, pozitif ve harekete geçirici ol. Metin 20-30 kelimeyi geçmemeli.`
+            content: `${randomTopic} konusunda 20 saniyelik bir YouTube Shorts videosu için çok sürükleyici ve ilgi çekici bir hikaye metni yaz. Hikaye heyecanlı bir yerde kesilmeli ve "Devamı Part 2'de" diyerek bitmeli. Metin 40-50 kelimeyi geçmemeli.`
           }
         ],
-        max_tokens: 100,
+        max_tokens: 150,
         temperature: 0.9
       })
     });
 
     const data = await response.json();
     if (data.choices && data.choices[0]) {
-      // Metni kısalt ve düzenle
+      // Metni düzenle
       let text = data.choices[0].message.content.trim();
       
-      // Metni 30 kelimeye kadar kısalt
+      // Metni 50 kelimeye kadar kısalt
       const words = text.split(/\s+/);
-      if (words.length > 30) {
-        text = words.slice(0, 30).join(' ') + '!';
+      if (words.length > 50) {
+        text = words.slice(0, 50).join(' ');
+      }
+      
+      // Eğer "Devamı Part 2'de" ifadesi yoksa ekle
+      if (!text.includes("Devamı Part 2'de") && !text.includes('Devamı Part 2\'de')) {
+        text = text + " Devamı Part 2'de";
       }
       
       return {
@@ -62,21 +67,21 @@ async function generateMotivationalText() {
       throw new Error('API yanıtı beklenmeyen formatta');
     }
   } catch (error) {
-    console.error('Metin oluşturma hatası:', error);
-    // Shorts için daha kısa fallback metinler
+    console.error('Hikaye metni oluşturma hatası:', error);
+    // Shorts için fallback hikaye metinleri
     const fallbackTexts = [
-      "Kendine inan! Bugün senin günün, harekete geç!",
-      "Vazgeçme! Her zorluk seni daha güçlü yapıyor!",
-      "Hayallerin için bugün bir adım at. Yarın çok geç olabilir!",
-      "Başarı, konfor alanının dışında başlar. Şimdi harekete geç!",
-      "Düştüğün yerden kalk ve devam et. Asla pes etme!"
+      "Karanlık odada bir ışık belirdi. Kapı yavaşça açıldı ve içeri giren siluetin gözleri parlıyordu. Elindeki haritayı açtığında, gizli hazineye giden yolu bulduğunu anladı. Devamı Part 2'de",
+      "Saatine baktı, zaman durmuştu. Etrafındaki herkes donmuş gibiydi. Sadece o hareket edebiliyordu. Pencereden dışarı baktığında gördüğü şey onu şoke etti. Devamı Part 2'de",
+      "Telefonuna gelen mesaj hayatını değiştirecekti: 'Geçmişi değiştirmek için son şansın.' Koordinatları takip ettiğinde, eski bir laboratuvarla karşılaştı. Kapıyı açtığında... Devamı Part 2'de",
+      "Yapay zeka asistanı aniden ekrandan çıkıp gerçek dünyada belirdi. 'Sana göstermem gereken bir şey var' dedi. Elini uzattığında, parmak uçlarından mavi bir ışık yayıldı. Devamı Part 2'de",
+      "Aynaya baktığında kendi yansıması yerine başka birini gördü. Yansıma ona gülümsedi ve 'Sonunda buluştuk' dedi. Elini aynaya uzattığında... Devamı Part 2'de"
     ];
     return {
       text: fallbackTexts[Math.floor(Math.random() * fallbackTexts.length)],
-      topic: "motivasyon"
+      topic: randomTopic
     };
   }
 }
 
-module.exports = { generateMotivationalText };
+module.exports = { generateStoryText: generateStoryText };
 
