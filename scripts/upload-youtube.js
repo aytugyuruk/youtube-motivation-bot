@@ -1,4 +1,3 @@
-/ scripts/upload-youtube.js
 const { google } = require('googleapis');
 const fs = require('fs');
 
