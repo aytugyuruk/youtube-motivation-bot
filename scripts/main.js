@@ -1,4 +1,3 @@
-# scripts/main.js - Ana koordinasyon scripti
 const { generateMotivationalText } = require('./generate-text');
 const { convertTextToSpeech } = require('./text-to-speech');
 const { downloadBackgroundVideos } = require('./download-videos');
