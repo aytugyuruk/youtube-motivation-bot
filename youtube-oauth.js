@@ -5,8 +5,8 @@ const https = require('https');
 const url = require('url');
 
 // YouTube OAuth ayarları
-const CLIENT_ID = '1065825354878-gr812l2ca8r24pn500rcm82o1selm6i0.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
+const CLIENT_ID = '1065825354878-0ok805824q1lmd8iof9sc0si3p7u15dv.apps.googleusercontent.com';
+const CLIENT_SECRET = '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';
 const REDIRECT_URI = 'http://localhost:8080';
 
 // 1. ADIM: Authorization URL oluştur
