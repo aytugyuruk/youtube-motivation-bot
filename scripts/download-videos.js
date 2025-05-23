@@ -3,12 +3,25 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 
-async function downloadBackgroundVideos(count = 3) {
+async function downloadBackgroundVideos(count = 2) {
   const videos = [];
   
   try {
-    // Pexels API'den video ara
-    const response = await fetch('https://api.pexels.com/videos/search?query=nature+calm+peaceful&per_page=10', {
+    // YouTube Shorts için dikey (portrait) videolar arayın
+    // Daha sürükleyici temalar: motivasyon, başarı, hareket, enerji
+    const queries = [
+      'success+motivation+vertical',
+      'energy+movement+vertical',
+      'achievement+inspiration+vertical',
+      'dream+goal+vertical',
+      'fitness+motivation+vertical'
+    ];
+    
+    // Rastgele bir sorgu seç
+    const randomQuery = queries[Math.floor(Math.random() * queries.length)];
+    
+    // Pexels API'den dikey video ara
+    const response = await fetch(`https://api.pexels.com/videos/search?query=${randomQuery}&orientation=portrait&per_page=15&size=medium`, {
       headers: {
         'Authorization': process.env.PEXELS_API_KEY
       }
@@ -17,25 +30,53 @@ async function downloadBackgroundVideos(count = 3) {
     const data = await response.json();
     
     if (!data.videos || data.videos.length === 0) {
-      throw new Error('Pexels\'dan video bulunamadı');
+      throw new Error('Pexels\'dan dikey video bulunamadı');
     }
 
+    // En kaliteli videoları seç (yüksek çözünürlüklü ve kısa süreli)
+    const filteredVideos = data.videos
+      .filter(video => {
+        // Video dosyasının en az bir HD veya daha yüksek kaliteli versiyonu olmalı
+        const hasHDVersion = video.video_files.some(file => 
+          (file.quality === 'hd' || file.quality === 'sd' || file.height >= 720) && 
+          file.file_type === 'video/mp4'
+        );
+        
+        // Süre 30 saniyeden az olmalı
+        const shortDuration = video.duration <= 30;
+        
+        return hasHDVersion && shortDuration;
+      });
+
     // Rastgele videolar seç ve indir
-    const selectedVideos = data.videos
+    const selectedVideos = filteredVideos
       .sort(() => 0.5 - Math.random())
       .slice(0, count);
 
+    if (selectedVideos.length === 0) {
+      throw new Error('Uygun dikey video bulunamadı');
+    }
+
     for (let i = 0; i < selectedVideos.length; i++) {
       const video = selectedVideos[i];
-      const videoFile = video.video_files.find(file => 
-        file.quality === 'hd' && file.file_type === 'video/mp4'
-      ) || video.video_files[0];
+      
+      // En yüksek kaliteli MP4 dosyasını seç (dikey format için)
+      const videoFiles = video.video_files
+        .filter(file => file.file_type === 'video/mp4')
+        .sort((a, b) => {
+          // Önce en yüksek çözünürlüklü olanları seç
+          if (a.height !== b.height) return b.height - a.height;
+          // Aynı çözünürlükte olanlar için en yüksek bit hızını seç
+          return b.width - a.width;
+        });
+
+      const videoFile = videoFiles[0];
 
       if (videoFile) {
         const fileName = `background_${i + 1}.mp4`;
         const filePath = path.join('temp', fileName);
         
-        console.log(`Video indiriliyor: ${fileName}`);
+        console.log(`Yüksek kaliteli dikey video indiriliyor: ${fileName} (${videoFile.width}x${videoFile.height})`);
         await downloadFile(videoFile.link, filePath);
         videos.push(filePath);
       }
@@ -59,6 +100,7 @@ async function downloadFile(url, filePath) {
   }
   
   fs.writeFileSync(filePath, buffer);
+  console.log(`Dosya kaydedildi: ${filePath}`);
 }
 
 module.exports = { downloadBackgroundVideos };
