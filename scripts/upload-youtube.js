@@ -10,17 +10,29 @@ async function uploadToYouTube(videoPath, title, description) {
 
     const youtube = google.youtube({ version: 'v3', auth });
 
+    // YouTube Shorts için optimize edilmiş metadata
     const videoMetadata = {
       snippet: {
         title: title,
         description: description,
-        tags: ['motivasyon', 'başarı', 'ilham', 'günlük motiv', 'türkçe'],
-        categoryId: '22', // People & Blogs
+        tags: [
+          'shorts',           // Shorts etiketi önemli
+          'motivasyon', 
+          'başarı', 
+          'ilham', 
+          'motivasyonshorts',
+          'kısamotiv',
+          'türkçe',
+          'günlük',
+          'motivasyonvideo'
+        ],
+        categoryId: '22',     // People & Blogs
         defaultLanguage: 'tr',
         defaultAudioLanguage: 'tr'
       },
       status: {
-        privacyStatus: 'public'
+        privacyStatus: 'public',
+        selfDeclaredMadeForKids: false,  // Çocuklar için değil
       }
     };
 
@@ -28,14 +40,23 @@ async function uploadToYouTube(videoPath, title, description) {
       body: fs.createReadStream(videoPath)
     };
 
+    console.log('YouTube Shorts videosu yükleniyor...');
     const response = await youtube.videos.insert({
       part: ['snippet', 'status'],
       requestBody: videoMetadata,
-      media: media
+      media: media,
+      notifySubscribers: true  // Abonelere bildirim gönder
     });
 
-    console.log('Video yüklendi:', `https://youtube.com/watch?v=${response.data.id}`);
-    return response.data;
+    const videoId = response.data.id;
+    const videoUrl = `https://youtube.com/shorts/${videoId}`;
+    console.log('YouTube Shorts videosu yüklendi:', videoUrl);
+    
+    return {
+      id: videoId,
+      url: videoUrl,
+      isShort: true
+    };
 
   } catch (error) {
     console.error('YouTube yükleme hatası:', error);
