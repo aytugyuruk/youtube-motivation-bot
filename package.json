@@ -1,0 +1,12 @@
+{
+  "name": "youtube-motivation-bot",
+  "version": "1.0.0",
+  "description": "Otomatik motivasyon videosu üreticisi",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "form-data": "^4.0.0"
+  }
+}
