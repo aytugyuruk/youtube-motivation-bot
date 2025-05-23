@@ -1,17 +1,17 @@
-const { generateMotivationalText } = require('./generate-text');
+const { generateStoryText } = require('./generate-text');
 const { convertTextToSpeech } = require('./text-to-speech');
 const { downloadBackgroundVideos } = require('./download-videos');
-const { createMotivationalVideo } = require('./create-video');
+const { createStoryVideo } = require('./create-video');
 const { uploadToYouTube } = require('./upload-youtube');
 const path = require('path');
 
 async function main() {
-  console.log('🎥 YouTube Shorts motivasyon videosu oluşturuluyor...');
+  console.log('🎥 YouTube Shorts hikaye videosu oluşturuluyor...');
   
   try {
-    // 1. Kısa motivasyon metni oluştur
-    console.log('📝 Kısa motivasyon metni oluşturuluyor...');
-    const { text, topic } = await generateMotivationalText();
+    // 1. Sürükleyici hikaye metni oluştur
+    console.log('📝 Sürükleyici hikaye metni oluşturuluyor...');
+    const { text, topic } = await generateStoryText();
     console.log('Oluşturulan metin:', text);
 
     // 2. Metni yüksek kaliteli sese çevir
@@ -23,24 +23,24 @@ async function main() {
     const backgroundVideos = await downloadBackgroundVideos(2); // 2 video indiriyoruz
 
     // 4. YouTube Shorts formatında video oluştur (9:16 dikey format)
-    console.log('🎥 YouTube Shorts videosu oluşturuluyor...');
-    const videoPath = await createMotivationalVideo(
+    console.log('🎥 YouTube Shorts hikaye videosu oluşturuluyor...');
+    const videoPath = await createStoryVideo(
       audioPath, 
       backgroundVideos, 
-      'output/shorts_motivation.mp4'
+      'output/shorts_story.mp4'
     );
 
     // 5. YouTube Shorts olarak yükle (test modunda değilse)
     if (process.env.TEST_MODE !== 'true') {
       console.log('📤 YouTube Shorts olarak yükleniyor...');
       
-      // Shorts için kısa ve dikkat çekici başlık
+      // Video süresini 20 saniye ile sınırlat çekici başlık
       const today = new Date();
       const formattedDate = today.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' });
-      const title = `${topic.charAt(0).toUpperCase() + topic.slice(1)} İçin Günlük Motivasyon | ${formattedDate} #shorts`;
+      const title = `${topic.charAt(0).toUpperCase() + topic.slice(1)} Hikayesi | Part 1 | ${formattedDate} #shorts`;
       
       // Shorts için optimize edilmiş açıklama ve etiketler
-      const description = `${text}\n\n#shorts #motivasyon #${topic.replace(/\s+/g, '')} #kısamotiv #türkçe #günlükmotivasyon #başarı #ilham`;
+      const description = `${text}\n\n#shorts #hikaye #${topic.replace(/\s+/g, '')} #ilgiçekici #türkçe #kısahikaye #part1 #devamıgelecek`;
       
       const uploadResult = await uploadToYouTube(videoPath, title, description);
       console.log('✅ YouTube Shorts başarıyla yüklendi:', uploadResult.url);
