@@ -26,8 +26,8 @@ async function createStoryVideo(audioPath, backgroundVideos = [], outputPath = '
             '-c:a aac',
             '-b:v 2500k',        // Daha yüksek video bit hızı
             '-b:a 192k',         // Daha yüksek ses bit hızı
-            '-shortest',
-            '-t', maxDuration,   // Maksimum 20 saniye
+            // '-shortest' komutunu kaldırıyorum, böylece video tam 20 saniye olacak
+            '-t', maxDuration,   // Tam 20 saniye
             // 9:16 dikey format (1080x1920) - Telefon ekranı için
             '-filter_complex [0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,eq=brightness=0.05:saturation=1.3[v]',
             '-map [v]',
@@ -52,8 +52,8 @@ async function createStoryVideo(audioPath, backgroundVideos = [], outputPath = '
             '-c:a aac',
             '-b:v 2500k',        // Daha yüksek video bit hızı
             '-b:a 192k',         // Daha yüksek ses bit hızı
-            '-shortest',
-            '-t', maxDuration,   // Maksimum 20 saniye
+            // '-shortest' komutunu kaldırıyorum, böylece video tam 20 saniye olacak
+            '-t', maxDuration,   // Tam 20 saniye
             '-r 30',
             '-preset slow',      // Daha yüksek kalite için 'slow' preset
             '-profile:v high',   // Yüksek profil
