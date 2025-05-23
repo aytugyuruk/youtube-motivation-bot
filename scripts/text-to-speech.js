@@ -8,12 +8,12 @@ async function convertTextToSpeech(text, outputPath = 'temp/speech.mp3') {
     // Google Cloud TTS istemcisi oluştur
     const client = new textToSpeech.TextToSpeechClient();
 
-    // Metni SSML ile zenginleştir - daha doğal ses için
+    // Metni SSML ile zenginleştir - daha doğal ve sürükleyici ses için
     const ssmlText = `<speak>
-      <prosody rate="0.95" pitch="+0.5" volume="loud">
-        <break time="500ms"/>
-        ${text}
+      <prosody rate="0.9" pitch="+0.2" volume="loud">
         <break time="700ms"/>
+        <emphasis level="strong">${text}</emphasis>
+        <break time="1000ms"/>
       </prosody>
     </speak>`;
 
@@ -21,15 +21,15 @@ async function convertTextToSpeech(text, outputPath = 'temp/speech.mp3') {
       input: { ssml: ssmlText },
       voice: {
         languageCode: 'tr-TR',
-        name: 'tr-TR-Standard-B',  // Türkçe kadın sesi (Standard modeli)
+        name: 'tr-TR-Wavenet-B',  // Türkçe kadın sesi (WaveNet modeli - daha doğal ses)
         ssmlGender: 'FEMALE'
       },
       audioConfig: {
         audioEncoding: 'MP3',
-        effectsProfileId: ['headphone-class-device'], // Daha yüksek kalite için
-        pitch: 0.5,                // Biraz daha yüksek ses tonu
-        speakingRate: 0.95,        // Biraz daha yavaş konuşma hızı
-        volumeGainDb: 3.0,         // Biraz daha yüksek ses seviyesi
+        effectsProfileId: ['large-home-entertainment-class-device'], // Daha yüksek kalite için
+        pitch: 0.2,                // Daha doğal ses tonu
+        speakingRate: 0.85,        // Daha yavaş konuşma hızı (hikaye anlatımı için)
+        volumeGainDb: 4.0,         // Daha yüksek ses seviyesi
         sampleRateHertz: 24000     // Daha yüksek örnekleme hızı
       }
     };
