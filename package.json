@@ -1,12 +1,33 @@
+# package.json - Güncellenmiş dependencies
 {
-  "name": "youtube-motivation-bot",
+  "name": "youtube-motivation-automation",
   "version": "1.0.0",
-  "description": "Otomatik motivasyon videosu üreticisi",
+  "description": "Automated YouTube motivation video creator",
+  "main": "scripts/main.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node scripts/main.js",
+    "test": "node scripts/main.js",
+    "dev": "TEST_MODE=true node scripts/main.js"
   },
   "dependencies": {
-    "axios": "^1.6.0",
-    "form-data": "^4.0.0"
-  }
+    "@google-cloud/text-to-speech": "^5.0.0",
+    "googleapis": "^126.0.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "youtube",
+    "automation", 
+    "motivation",
+    "video",
+    "ai"
+  ],
+  "author": "YouTube Motivation Bot",
+  "license": "MIT"
 }
