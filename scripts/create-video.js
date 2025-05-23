@@ -2,7 +2,7 @@ const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 const fs = require('fs');
 
-async function createMotivationalVideo(audioPath, backgroundVideos = [], outputPath = 'output/motivation_video.mp4') {
+async function createStoryVideo(audioPath, backgroundVideos = [], outputPath = 'output/story_video.mp4') {
   return new Promise((resolve, reject) => {
     try {
       // Output klasörü oluştur
@@ -13,8 +13,8 @@ async function createMotivationalVideo(audioPath, backgroundVideos = [], outputP
 
       let command = ffmpeg();
 
-      // Video süresini 15 saniye ile sınırla
-      const maxDuration = 15;
+      // Video süresini 20 saniye ile sınırla
+      const maxDuration = 20;
 
       if (backgroundVideos.length > 0) {
         // Arkaplan videosu varsa - YouTube Shorts formatı (9:16 dikey format)
@@ -27,7 +27,7 @@ async function createMotivationalVideo(audioPath, backgroundVideos = [], outputP
             '-b:v 2500k',        // Daha yüksek video bit hızı
             '-b:a 192k',         // Daha yüksek ses bit hızı
             '-shortest',
-            '-t', maxDuration,   // Maksimum 15 saniye
+            '-t', maxDuration,   // Maksimum 20 saniye
             // 9:16 dikey format (1080x1920) - Telefon ekranı için
             '-filter_complex [0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,eq=brightness=0.05:saturation=1.3[v]',
             '-map [v]',
@@ -53,7 +53,7 @@ async function createMotivationalVideo(audioPath, backgroundVideos = [], outputP
             '-b:v 2500k',        // Daha yüksek video bit hızı
             '-b:a 192k',         // Daha yüksek ses bit hızı
             '-shortest',
-            '-t', maxDuration,   // Maksimum 15 saniye
+            '-t', maxDuration,   // Maksimum 20 saniye
             '-r 30',
             '-preset slow',      // Daha yüksek kalite için 'slow' preset
             '-profile:v high',   // Yüksek profil
@@ -96,4 +96,4 @@ async function createMotivationalVideo(audioPath, backgroundVideos = [], outputP
   });
 }
 
-module.exports = { createMotivationalVideo };
+module.exports = { createStoryVideo: createStoryVideo };
